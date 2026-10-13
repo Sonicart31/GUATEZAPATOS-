@@ -30,7 +30,7 @@ function AuthPage() {
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       setBusy(false);
-      if (error) return toast.error("Correo o contraseña incorrectos");
+      if (error) { toast.error("Correo o contraseña incorrectos"); return; }
       toast.success("¡Bienvenido!");
       navigate({ to: "/" });
     } else {
@@ -39,7 +39,7 @@ function AuthPage() {
         options: { emailRedirectTo: window.location.origin, data: { full_name: fullName, phone } },
       });
       setBusy(false);
-      if (error) return toast.error(error.message);
+      if (error) { toast.error(error.message); return; }
       if (data.session) navigate({ to: "/" });
       else toast.success("Revisa tu correo para confirmar tu cuenta.");
     }

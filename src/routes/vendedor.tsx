@@ -82,7 +82,7 @@ function OrderRow({ o, onSaved }: { o: OrderWithItems; onSaved: () => void }) {
   const [note, setNote] = useState(o.seller_note ?? "");
   const save = async () => {
     const { error } = await supabase.from("orders").update({ status, seller_note: note || null }).eq("id", o.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Pedido actualizado; el cliente verá el mensaje");
     onSaved();
   };
@@ -125,18 +125,18 @@ function Inventory() {
   const refresh = () => { qc.invalidateQueries({ queryKey: ["seller-products"] }); qc.invalidateQueries({ queryKey: ["products"] }); };
 
   const save = async () => {
-    if (!editing?.name) return toast.error("Falta el nombre");
+    if (!editing?.name) { toast.error("Falta el nombre"); return; }
     const payload = { name: editing.name, brand: editing.brand ?? "Nike", description: editing.description ?? "", price: Number(editing.price) || 0, stock: Number(editing.stock) || 0, image_url: editing.image_url ?? "", sizes: editing.sizes ?? "", active: editing.active ?? true };
     const { error } = editing.id
       ? await supabase.from("products").update(payload).eq("id", editing.id)
       : await supabase.from("products").insert(payload);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Producto guardado"); setEditing(null); refresh();
   };
   const del = async (id: string) => {
     if (!confirm("¿Eliminar este producto?")) return;
     const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   };
 

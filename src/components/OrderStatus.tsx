@@ -9,5 +9,5 @@ const styles: Record<string, string> = {
 };
 
 export function StatusChip({ status }: { status: string }) {
-  return <span className={`chip capitalize ${styles[status] ?? styles.pendiente}`}>{status}</span>;
+  return <span className={`chip capitalize ${styles[status] ?? styles['pendiente']}`}>{status}</span>;
 }
