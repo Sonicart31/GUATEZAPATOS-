@@ -1,5 +1,5 @@
 # GuateZapatos roadmap
-- [ ] Activar Lovable Cloud
-- [ ] Registro / inicio de sesión de usuarios (cliente y vendedor)
-- [ ] Tienda para clientes: catálogo Nike/Adidas, carrito, realizar pedido
-- [ ] Panel de vendedor: inventario (CRUD, stock) y pedidos de clientes con cambio de estado
+- [x] Activar Lovable Cloud
+- [x] Registro / inicio de sesión de usuarios (cliente y vendedor)
+- [x] Tienda para clientes: catálogo Nike/Adidas, carrito, realizar pedido
+- [x] Panel de vendedor: inventario y pedidos con estado y mensaje al cliente
