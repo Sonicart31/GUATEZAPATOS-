@@ -75,13 +75,13 @@
   @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:opacity-50;
 }
 @utility btn-primary {
-  @apply btn bg-primary text-primary-foreground hover:brightness-110;
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:opacity-50 bg-primary text-primary-foreground hover:brightness-110;
 }
 @utility btn-ink {
-  @apply btn bg-ink text-ink-foreground hover:bg-primary;
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:opacity-50 bg-ink text-ink-foreground hover:bg-primary;
 }
 @utility btn-ghost {
-  @apply btn border border-border bg-card hover:bg-secondary;
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:opacity-50 border border-border bg-card hover:bg-secondary;
 }
 @utility input {
   @apply w-full rounded-md border border-input bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring;
