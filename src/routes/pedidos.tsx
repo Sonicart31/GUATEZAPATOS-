@@ -12,6 +12,8 @@ export const Route = createFileRoute("/pedidos")({
       { name: "description", content: "Consulta el estado de tus pedidos en GuateZapatos." },
       { property: "og:title", content: "Mis pedidos — GuateZapatos" },
       { property: "og:description", content: "Seguimiento de tus pedidos." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: MyOrders,
