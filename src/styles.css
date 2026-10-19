@@ -71,12 +71,24 @@
   h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; text-transform: uppercase; }
 }
 
-@layer components {
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:opacity-50; }
-  .btn-primary { @apply btn bg-primary text-primary-foreground hover:brightness-110; }
-  .btn-ink { @apply btn bg-ink text-ink-foreground hover:bg-primary; }
-  .btn-ghost { @apply btn border border-border bg-card hover:bg-secondary; }
-  .input { @apply w-full rounded-md border border-input bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring; }
-  .panel { @apply rounded-xl border border-border bg-card; }
-  .chip { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-primary text-primary-foreground hover:brightness-110;
+}
+@utility btn-ink {
+  @apply btn bg-ink text-ink-foreground hover:bg-primary;
+}
+@utility btn-ghost {
+  @apply btn border border-border bg-card hover:bg-secondary;
+}
+@utility input {
+  @apply w-full rounded-md border border-input bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring;
+}
+@utility panel {
+  @apply rounded-xl border border-border bg-card;
+}
+@utility chip {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
 }
