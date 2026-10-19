@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Authentication
+- Keep account confirmation in Cloud Auth; validate repeated email locally without bypassing hosted confirmation.
+- Password recovery uses Cloud Auth recovery OTP or recovery links on the public /reset-password page; never generate or store PINs locally.

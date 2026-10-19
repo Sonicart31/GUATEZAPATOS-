@@ -14,6 +14,8 @@ export const Route = createFileRoute("/vendedor")({
       { name: "description", content: "Gestiona inventario y pedidos de GuateZapatos." },
       { property: "og:title", content: "Panel de vendedor — GuateZapatos" },
       { property: "og:description", content: "Inventario y pedidos de clientes." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),

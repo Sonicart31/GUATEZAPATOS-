@@ -12,6 +12,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Compra tenis Nike y Adidas originales en línea con entrega en Guatemala." },
       { property: "og:title", content: "GuateZapatos — Tenis Nike y Adidas" },
       { property: "og:description", content: "Tenis Nike y Adidas con entrega en Guatemala." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Shop,
