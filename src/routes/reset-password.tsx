@@ -44,7 +44,6 @@ function ResetPassword() {
     });
     const params = new URLSearchParams(window.location.hash.slice(1));
     if (params.has("error")) {
-      setErrorMessage("Le lien de récupération n’est plus valide.");
       setErrorMessage("El enlace de recuperación venció o no es válido. Solicita otro.");
       window.history.replaceState(null, "", window.location.pathname);
     }
