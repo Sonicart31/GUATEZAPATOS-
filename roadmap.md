@@ -1,4 +1,5 @@
 # GuateZapatos roadmap
+- [ ] Añadir y verificar botones de reportes PDF, XLSX y CSV en pedidos e inventario del vendedor
 - [x] Activar Lovable Cloud
 - [x] Registro / inicio de sesión de usuarios (cliente y vendedor)
 - [x] Tienda para clientes: catálogo Nike/Adidas, carrito, realizar pedido
