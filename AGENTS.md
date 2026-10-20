@@ -9,7 +9,6 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-## Authentication
 ## Reports
 - Generate seller exports in the browser from the existing RLS-protected query results, preparing blobs before download clicks to preserve mobile user activation.
 
