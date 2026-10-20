@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { q } from "@/lib/cart";
 import { STATUSES, StatusChip } from "@/components/OrderStatus";
+import { ReportDownloads } from "@/components/ReportDownloads";
 
 export const Route = createFileRoute("/vendedor")({
   head: () => ({
@@ -46,7 +47,7 @@ function SellerPage() {
 
 function Orders() {
   const qc = useQueryClient();
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [], isPending, isError } = useQuery({
     queryKey: ["seller-orders"],
     queryFn: async () => {
       const { data, error } = await supabase.from("orders").select("*, order_items(*)").order("created_at", { ascending: false });
@@ -59,9 +60,15 @@ function Orders() {
   });
   const pending = orders.filter((o) => o.status === "pendiente").length;
   const sales = orders.filter((o) => o.status !== "cancelado").reduce((s, o) => s + Number(o.total), 0);
+  const report = useMemo(() => ({
+    title: "Pedidos", filename: "guatezapatos-pedidos",
+    columns: ["Pedido", "Fecha", "Cliente", "Estado", "Total (Q)", "Teléfono", "Dirección", "Productos", "Mensaje del vendedor"],
+    rows: orders.map(o => [o.id, new Date(o.created_at).toLocaleString("es-GT"), o.customer_name, o.status, Number(o.total), o.phone, o.address, o.order_items.map(i => `${i.quantity} × ${i.product_name} (talla ${i.size})`).join("; "), o.seller_note ?? ""]),
+  }), [orders]);
 
   return (
     <div className="space-y-4">
+      <ReportDownloads report={report} loading={isPending} error={isError} />
       <div className="grid gap-4 sm:grid-cols-3">
         <Stat label="Pedidos" value={String(orders.length)} />
         <Stat label="Pendientes" value={String(pending)} />
@@ -116,7 +123,7 @@ const empty = { name: "", brand: "Nike", description: "", price: 0, stock: 0, im
 function Inventory() {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<Product> | null>(null);
-  const { data: products = [] } = useQuery({
+  const { data: products = [], isPending, isError } = useQuery({
     queryKey: ["seller-products"],
     queryFn: async () => {
       const { data, error } = await supabase.from("products").select("*").order("created_at");
@@ -125,6 +132,11 @@ function Inventory() {
     },
   });
   const refresh = () => { qc.invalidateQueries({ queryKey: ["seller-products"] }); qc.invalidateQueries({ queryKey: ["products"] }); };
+  const report = useMemo(() => ({
+    title: "Inventario", filename: "guatezapatos-inventario",
+    columns: ["Producto", "Marca", "Precio (Q)", "Existencias", "Tallas", "Estado", "Descripción"],
+    rows: products.map(p => [p.name, p.brand, Number(p.price), p.stock, p.sizes, p.active ? "Visible" : "Oculto", p.description]),
+  }), [products]);
 
   const save = async () => {
     if (!editing?.name) { toast.error("Falta el nombre"); return; }
@@ -144,6 +156,7 @@ function Inventory() {
 
   return (
     <div className="space-y-4">
+      <ReportDownloads report={report} loading={isPending} error={isError} />
       <button className="btn-primary" onClick={() => setEditing({ ...empty })}>+ Nuevo producto</button>
       {editing && (
         <div className="panel grid gap-3 p-4 sm:grid-cols-2">

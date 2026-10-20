@@ -1,4 +1,6 @@
 # GuateZapatos roadmap
+- [x] Añadir botones de reportes PDF, XLSX y CSV; verificar archivos con datos de prueba
+- [ ] Verificar descargas desde la cuenta real del vendedor — requiere iniciar sesión en la vista previa
 - [x] Activar Lovable Cloud
 - [x] Registro / inicio de sesión de usuarios (cliente y vendedor)
 - [x] Tienda para clientes: catálogo Nike/Adidas, carrito, realizar pedido

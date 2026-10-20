@@ -9,6 +9,9 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
+## Reports
+- Generate seller exports in the browser from the existing RLS-protected query results, preparing blobs before download clicks to preserve mobile user activation.
+
 ## Authentication
 - Keep account confirmation in Cloud Auth; validate repeated email locally without bypassing hosted confirmation.
 - Password recovery uses Cloud Auth recovery OTP or recovery links on the public /reset-password page; never generate or store PINs locally.
