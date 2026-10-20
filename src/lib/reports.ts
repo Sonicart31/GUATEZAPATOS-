@@ -38,9 +38,15 @@ export async function createReportFiles(report: Report): Promise<Record<ReportFo
   };
   const wrapped = (text: string) => {
     let part = "";
-    for (const char of text.replace(/[\r\n\t]/g, " ")) {
-      if (font.widthOfTextAtSize(part + char, 9) > 520) { line(part); part = ""; }
-      part += char;
+    for (const word of text.replace(/[\r\n\t]/g, " ").split(" ")) {
+      const candidate = part ? `${part} ${word}` : word;
+      if (font.widthOfTextAtSize(candidate, 9) <= 520) { part = candidate; continue; }
+      if (part) line(part);
+      part = "";
+      for (const char of word) {
+        if (font.widthOfTextAtSize(part + char, 9) > 520) { line(part); part = ""; }
+        part += char;
+      }
     }
     if (part) line(part);
   };
