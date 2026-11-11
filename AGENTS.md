@@ -15,3 +15,5 @@
 ## Authentication
 - Keep account confirmation in Cloud Auth; validate repeated email locally without bypassing hosted confirmation.
 - Password recovery uses Cloud Auth recovery OTP or recovery links on the public /reset-password page; never generate or store PINs locally.
+- Personal transaction PINs are hashed in a private RLS-locked table; authenticated database functions verify them atomically with purchases and cancellations, preserving failed-attempt counters.
+- Security monitoring displays persisted transaction-security events to sellers only; periodic refresh is not a full vulnerability scanner.

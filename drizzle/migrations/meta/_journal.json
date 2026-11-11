@@ -8,6 +8,13 @@
       "when": 1791851940177,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794364434364,
+      "tag": "0001_personal_transaction_pin_security",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { useCart, q } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { pinSchema, requirePinResult } from "@/lib/pin";
 
 export function SiteHeader() {
   const { user, role, signOut } = useAuth();
@@ -13,13 +15,15 @@ export function SiteHeader() {
   const count = items.reduce((s, i) => s + i.quantity, 0);
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link to="/" className="font-display text-xl uppercase tracking-tight">
           Guate<span className="text-primary">Zapatos</span>
         </Link>
-        <nav className="flex items-center gap-2 text-sm">
+        <nav className="flex flex-wrap items-center gap-2 text-sm">
           <Link to="/" className="px-2 py-1 font-semibold hover:text-primary">Tienda</Link>
           {user && <Link to="/pedidos" className="px-2 py-1 font-semibold hover:text-primary">Mis pedidos</Link>}
+          {user && <Button variant="ghost" asChild><Link to="/mi-pin">Mi PIN</Link></Button>}
+          {role === "vendedor" && <Button variant="ghost" asChild><Link to="/riesgos">Riesgos</Link></Button>}
           {role === "vendedor" && <Link to="/vendedor" className="chip bg-accent text-accent-foreground">Panel vendedor</Link>}
           {user ? (
             <button className="btn-ghost px-3" onClick={async () => { await signOut(); navigate({ to: "/", replace: true }); }} aria-label="Cerrar sesión">
@@ -46,30 +50,37 @@ function CartDrawer() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
+  const [pin, setPin] = useState("");
   const total = items.reduce((s, i) => s + i.price * i.quantity, 0);
   if (!open) return null;
 
   const checkout = async () => {
     if (!user) { setOpen(false); navigate({ to: "/auth" }); return; }
     if (!address || !phone) { toast.error("Ingresa dirección y teléfono"); return; }
+    if (busy) return;
+    if (!pinSchema.safeParse(pin).success) { toast.error("Ingresa tu PIN personal de 6 dígitos"); return; }
     setBusy(true);
-    const { error } = await supabase.rpc("place_order", {
+    try {
+    const { data, error } = await supabase.rpc("place_order_with_pin", {
       _items: items.map((i) => ({ product_id: i.product_id, size: i.size, quantity: i.quantity })),
-      _address: address, _phone: phone,
+      _address: address, _phone: phone, _pin: pin,
     });
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
+    setPin("");
+    if (error) throw error;
+    requirePinResult(data);
     clear(); setOpen(false);
     toast.success("¡Pedido realizado! El vendedor lo revisará pronto.");
     navigate({ to: "/pedidos" });
+    } catch (error) { toast.error(error instanceof Error ? error.message : "No se pudo confirmar la compra"); }
+    finally { setPin(""); setBusy(false); }
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-ink/40" onClick={() => setOpen(false)}>
+    <div className="fixed inset-0 z-40 flex justify-end bg-ink/40" onClick={() => { setPin(""); setOpen(false); }}>
       <aside className="flex h-full w-full max-w-md flex-col bg-background p-5" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl">Tu carrito</h2>
-          <button onClick={() => setOpen(false)} aria-label="Cerrar"><X /></button>
+          <Button variant="ghost" size="icon" onClick={() => { setPin(""); setOpen(false); }} aria-label="Cerrar"><X /></Button>
         </div>
         <div className="flex-1 space-y-3 overflow-y-auto">
           {items.length === 0 && <p className="text-muted-foreground">Tu carrito está vacío.</p>}
@@ -91,12 +102,14 @@ function CartDrawer() {
               <>
                 <input className="input" placeholder="Dirección de entrega" value={address} onChange={(e) => setAddress(e.target.value)} />
                 <input className="input" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                <input className="input" aria-label="PIN para confirmar compra" placeholder="PIN personal de 6 dígitos" type="password" inputMode="numeric" maxLength={6} autoComplete="off" value={pin} onChange={e => setPin(e.target.value)} />
+                <Button variant="link" asChild><Link to="/mi-pin" onClick={() => { setPin(""); setOpen(false); }}>Crear o cambiar mi PIN</Link></Button>
               </>
             )}
             <div className="flex justify-between font-display text-lg uppercase"><span>Total</span><span>{q(total)}</span></div>
-            <button className="btn-primary w-full py-3" disabled={busy} onClick={checkout}>
+            <Button className="w-full" disabled={busy} onClick={checkout}>
               {user ? (busy ? "Procesando…" : "Realizar pedido") : "Ingresa para comprar"}
-            </button>
+            </Button>
           </div>
         )}
       </aside>

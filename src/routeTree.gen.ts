@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as MiPinRouteImport } from './routes/mi-pin'
 import { Route as PedidosRouteImport } from './routes/pedidos'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RiesgosRouteImport } from './routes/riesgos'
 import { Route as VendedorRouteImport } from './routes/vendedor'
 
 const IndexRoute = IndexRouteImport.update({
@@ -25,6 +27,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MiPinRoute = MiPinRouteImport.update({
+  id: '/mi-pin',
+  path: '/mi-pin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PedidosRoute = PedidosRouteImport.update({
   id: '/pedidos',
   path: '/pedidos',
@@ -33,6 +40,11 @@ const PedidosRoute = PedidosRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiesgosRoute = RiesgosRouteImport.update({
+  id: '/riesgos',
+  path: '/riesgos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VendedorRoute = VendedorRouteImport.update({
@@ -44,38 +56,68 @@ const VendedorRoute = VendedorRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/mi-pin': typeof MiPinRoute
   '/pedidos': typeof PedidosRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/riesgos': typeof RiesgosRoute
   '/vendedor': typeof VendedorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/mi-pin': typeof MiPinRoute
   '/pedidos': typeof PedidosRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/riesgos': typeof RiesgosRoute
   '/vendedor': typeof VendedorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/mi-pin': typeof MiPinRoute
   '/pedidos': typeof PedidosRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/riesgos': typeof RiesgosRoute
   '/vendedor': typeof VendedorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/pedidos' | '/reset-password' | '/vendedor'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/mi-pin'
+    | '/pedidos'
+    | '/reset-password'
+    | '/riesgos'
+    | '/vendedor'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/pedidos' | '/reset-password' | '/vendedor'
-  id: '__root__' | '/' | '/auth' | '/pedidos' | '/reset-password' | '/vendedor'
+  to:
+    | '/'
+    | '/auth'
+    | '/mi-pin'
+    | '/pedidos'
+    | '/reset-password'
+    | '/riesgos'
+    | '/vendedor'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/mi-pin'
+    | '/pedidos'
+    | '/reset-password'
+    | '/riesgos'
+    | '/vendedor'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  MiPinRoute: typeof MiPinRoute
   PedidosRoute: typeof PedidosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RiesgosRoute: typeof RiesgosRoute
   VendedorRoute: typeof VendedorRoute
 }
 
@@ -95,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mi-pin': {
+      id: '/mi-pin'
+      path: '/mi-pin'
+      fullPath: '/mi-pin'
+      preLoaderRoute: typeof MiPinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pedidos': {
       id: '/pedidos'
       path: '/pedidos'
@@ -107,6 +156,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/riesgos': {
+      id: '/riesgos'
+      path: '/riesgos'
+      fullPath: '/riesgos'
+      preLoaderRoute: typeof RiesgosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vendedor': {
@@ -122,8 +178,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  MiPinRoute: MiPinRoute,
   PedidosRoute: PedidosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RiesgosRoute: RiesgosRoute,
   VendedorRoute: VendedorRoute,
 }
 export const routeTree = rootRouteImport

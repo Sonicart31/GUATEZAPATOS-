@@ -155,6 +155,54 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          severity: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          severity: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          severity?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transaction_pins: {
+        Row: {
+          failed_attempts: number
+          locked_until: string | null
+          pin_hash: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          failed_attempts?: number
+          locked_until?: string | null
+          pin_hash: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          failed_attempts?: number
+          locked_until?: string | null
+          pin_hash?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -178,6 +226,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_order_with_pin: {
+        Args: { _order_id: string; _pin: string }
+        Returns: Json
+      }
+      check_transaction_pin: { Args: { _pin: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -189,6 +242,16 @@ export type Database = {
         Args: { _address: string; _items: Json; _phone: string }
         Returns: string
       }
+      place_order_with_pin: {
+        Args: { _address: string; _items: Json; _phone: string; _pin: string }
+        Returns: Json
+      }
+      security_overview: { Args: never; Returns: Json }
+      set_transaction_pin: {
+        Args: { _current_pin?: string; _pin: string }
+        Returns: Json
+      }
+      transaction_pin_status: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "vendedor" | "cliente"

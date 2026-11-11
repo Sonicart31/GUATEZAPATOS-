@@ -1,4 +1,7 @@
 # GuateZapatos roadmap
+- [x] PIN personal obligatorio en compras y cancelaciones, con validación protegida
+- [x] Pantalla del vendedor con eventos y riesgos de seguridad actualizados
+- [ ] Probar creación del PIN, compra, cancelación y eventos con cuenta real — requiere que el usuario inicie sesión en la vista previa
 - [x] Añadir botones de reportes PDF, XLSX y CSV; verificar archivos con datos de prueba
 - [ ] Verificar descargas desde la cuenta real del vendedor — requiere iniciar sesión en la vista previa
 - [x] Activar Lovable Cloud

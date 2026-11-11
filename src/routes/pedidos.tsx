@@ -1,5 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { canCancelOrder, pinSchema, requirePinResult } from "@/lib/pin";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { q } from "@/lib/cart";
@@ -21,11 +25,29 @@ export const Route = createFileRoute("/pedidos")({
 
 function MyOrders() {
   const { user, loading } = useAuth();
+  const qc = useQueryClient();
+  const [cancelling, setCancelling] = useState<string | null>(null);
+  const [pin, setPin] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function cancelOrder(id: string) {
+    if (busy) return;
+    if (!pinSchema.safeParse(pin).success) { toast.error("Ingresa tu PIN de 6 dígitos"); return; }
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("cancel_order_with_pin", { _order_id: id, _pin: pin });
+      if (error) throw error;
+      requirePinResult(data); setCancelling(null); toast.success("Pedido cancelado");
+      await qc.invalidateQueries({ queryKey: ["my-orders"] });
+      await qc.invalidateQueries({ queryKey: ["products"] });
+    } catch (error) { toast.error(error instanceof Error ? error.message : "No se pudo cancelar"); }
+    finally { setPin(""); setBusy(false); }
+  }
   const { data: orders = [] } = useQuery({
     queryKey: ["my-orders", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("*, order_items(*)").eq("customer_id", user!.id).order("created_at", { ascending: false });
+      if (!user) return [];
+      const { data, error } = await supabase.from("orders").select("*, order_items(*)").eq("customer_id", user.id).order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -55,6 +77,7 @@ function MyOrders() {
             </ul>
             {o.seller_note && <p className="rounded-md bg-accent/40 p-3 text-sm"><b>Mensaje del vendedor:</b> {o.seller_note}</p>}
             <p className="mt-3 text-right font-display uppercase">Total {q(Number(o.total))}</p>
+            {canCancelOrder(o.status) && (cancelling === o.id ? <div className="mt-4 space-y-3 border-t border-border pt-4"><label className="block text-sm">PIN para cancelar<input className="input mt-1" aria-label="PIN para cancelar" type="password" inputMode="numeric" maxLength={6} autoComplete="off" value={pin} onChange={e => setPin(e.target.value)} /></label><div className="flex flex-wrap gap-2"><Button variant="destructive" disabled={busy} onClick={() => cancelOrder(o.id)}>{busy ? "Cancelando…" : "Confirmar cancelación"}</Button><Button variant="outline" disabled={busy} onClick={() => { setCancelling(null); setPin(""); }}>Volver</Button></div></div> : <Button variant="outline" className="mt-4" onClick={() => { setCancelling(o.id); setPin(""); }}>Cancelar pedido</Button>)}
           </div>
         ))}
       </div>

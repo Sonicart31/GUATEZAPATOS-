@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { q } from "@/lib/cart";
 import { STATUSES, StatusChip } from "@/components/OrderStatus";
 import { ReportDownloads } from "@/components/ReportDownloads";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/vendedor")({
   head: () => ({
@@ -39,6 +40,7 @@ function SellerPage() {
       <div className="mb-6 flex gap-2">
         <button className={tab === "pedidos" ? "btn-ink" : "btn-ghost"} onClick={() => setTab("pedidos")}>Pedidos</button>
         <button className={tab === "inventario" ? "btn-ink" : "btn-ghost"} onClick={() => setTab("inventario")}>Inventario</button>
+        <Button variant="outline" asChild><Link to="/riesgos">Riesgos de seguridad</Link></Button>
       </div>
       {tab === "pedidos" ? <Orders /> : <Inventory />}
     </main>
