@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-type Role = "vendedor" | "cliente" | null;
+type Role = "vendedor" | "analista" | "cliente" | null;
 type AuthCtx = { user: User | null; role: Role; loading: boolean; signOut: () => Promise<void> };
 
 const Ctx = createContext<AuthCtx>({ user: null, role: null, loading: true, signOut: async () => {} });
@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (u) {
         const { data } = await supabase.from("user_roles").select("role").eq("user_id", u.id);
         const roles = (data ?? []).map((r) => r.role);
-        setRole(roles.includes("vendedor") ? "vendedor" : "cliente");
+        setRole(roles.includes("vendedor") ? "vendedor" : roles.includes("analista") ? "analista" : "cliente");
       } else setRole(null);
       setLoading(false);
     };

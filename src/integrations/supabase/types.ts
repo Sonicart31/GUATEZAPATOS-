@@ -254,7 +254,7 @@ export type Database = {
       transaction_pin_status: { Args: never; Returns: Json }
     }
     Enums: {
-      app_role: "vendedor" | "cliente"
+      app_role: "vendedor" | "cliente" | "analista"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -382,7 +382,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["vendedor", "cliente"],
+      app_role: ["vendedor", "cliente", "analista"],
     },
   },
 } as const

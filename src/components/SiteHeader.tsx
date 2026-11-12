@@ -23,7 +23,7 @@ export function SiteHeader() {
           <Link to="/" className="px-2 py-1 font-semibold hover:text-primary">Tienda</Link>
           {user && <Link to="/pedidos" className="px-2 py-1 font-semibold hover:text-primary">Mis pedidos</Link>}
           {user && <Button variant="ghost" asChild><Link to="/mi-pin">Mi PIN</Link></Button>}
-          {role === "vendedor" && <Button variant="ghost" asChild><Link to="/riesgos">Riesgos</Link></Button>}
+          {(role === "vendedor" || role === "analista") && <Button variant="ghost" asChild><Link to="/riesgos">Riesgos</Link></Button>}
           {role === "vendedor" && <Link to="/vendedor" className="chip bg-accent text-accent-foreground">Panel vendedor</Link>}
           {user ? (
             <button className="btn-ghost px-3" onClick={async () => { await signOut(); navigate({ to: "/", replace: true }); }} aria-label="Cerrar sesión">
