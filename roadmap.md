@@ -1,4 +1,6 @@
 # GuateZapatos roadmap
+- [x] Separar inventario: vendedor solo consulta; administrador agrega productos y modifica existencias
+- [ ] Asignar una cuenta real al rol administrador — requiere correo del usuario
 - [x] PIN personal obligatorio en compras y cancelaciones, con validación protegida
 - [x] Pantalla del vendedor con eventos y riesgos de seguridad actualizados
 - [ ] Probar creación del PIN, compra, cancelación y eventos con cuenta real — requiere que el usuario inicie sesión en la vista previa

@@ -7,6 +7,7 @@ import { useCart, q } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { pinSchema, requirePinResult } from "@/lib/pin";
+import { canManageInventory } from "@/lib/permissions";
 
 export function SiteHeader() {
   const { user, role, signOut } = useAuth();
@@ -25,6 +26,7 @@ export function SiteHeader() {
           {user && role !== "cliente" && <Button variant="ghost" asChild><Link to="/mi-pin">Mi PIN</Link></Button>}
           {(role === "vendedor" || role === "analista") && <Button variant="ghost" asChild><Link to="/riesgos">Riesgos</Link></Button>}
           {role === "vendedor" && <Link to="/vendedor" className="chip bg-accent text-accent-foreground">Panel vendedor</Link>}
+          {canManageInventory(role) && <Link to="/admin" className="chip bg-accent text-accent-foreground">Administración</Link>}
           {user ? (
             <button className="btn-ghost px-3" onClick={async () => { await signOut(); navigate({ to: "/", replace: true }); }} aria-label="Cerrar sesión">
               <LogOut className="h-4 w-4" />

@@ -8,12 +8,13 @@ import { q } from "@/lib/cart";
 import { STATUSES, StatusChip } from "@/components/OrderStatus";
 import { ReportDownloads } from "@/components/ReportDownloads";
 import { Button } from "@/components/ui/button";
+import { InventoryTable, type InventoryProduct } from "@/components/InventoryTable";
 
 export const Route = createFileRoute("/vendedor")({
   head: () => ({
     meta: [
       { title: "Panel de vendedor — GuateZapatos" },
-      { name: "description", content: "Gestiona inventario y pedidos de GuateZapatos." },
+      { name: "description", content: "Consulta el inventario y gestiona los pedidos de GuateZapatos." },
       { property: "og:title", content: "Panel de vendedor — GuateZapatos" },
       { property: "og:description", content: "Inventario y pedidos de clientes." },
       { property: "og:type", content: "website" },
@@ -119,80 +120,26 @@ function OrderRow({ o, onSaved }: { o: OrderWithItems; onSaved: () => void }) {
   );
 }
 
-type Product = { id: string; name: string; brand: string; description: string; price: number; stock: number; image_url: string; sizes: string; active: boolean };
-const empty = { name: "", brand: "Nike", description: "", price: 0, stock: 0, image_url: "", sizes: "38,39,40,41,42,43", active: true };
-
 function Inventory() {
-  const qc = useQueryClient();
-  const [editing, setEditing] = useState<Partial<Product> | null>(null);
   const { data: products = [], isPending, isError } = useQuery({
     queryKey: ["seller-products"],
     queryFn: async () => {
       const { data, error } = await supabase.from("products").select("*").order("created_at");
       if (error) throw error;
-      return data as Product[];
+      return data as InventoryProduct[];
     },
   });
-  const refresh = () => { qc.invalidateQueries({ queryKey: ["seller-products"] }); qc.invalidateQueries({ queryKey: ["products"] }); };
   const report = useMemo(() => ({
     title: "Inventario", filename: "guatezapatos-inventario",
     columns: ["Producto", "Marca", "Precio (Q)", "Existencias", "Tallas", "Estado", "Descripción"],
     rows: products.map(p => [p.name, p.brand, Number(p.price), p.stock, p.sizes, p.active ? "Visible" : "Oculto", p.description]),
   }), [products]);
 
-  const save = async () => {
-    if (!editing?.name) { toast.error("Falta el nombre"); return; }
-    const payload = { name: editing.name, brand: editing.brand ?? "Nike", description: editing.description ?? "", price: Number(editing.price) || 0, stock: Number(editing.stock) || 0, image_url: editing.image_url ?? "", sizes: editing.sizes ?? "", active: editing.active ?? true };
-    const { error } = editing.id
-      ? await supabase.from("products").update(payload).eq("id", editing.id)
-      : await supabase.from("products").insert(payload);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Producto guardado"); setEditing(null); refresh();
-  };
-  const del = async (id: string) => {
-    if (!confirm("¿Eliminar este producto?")) return;
-    const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    refresh();
-  };
-
   return (
     <div className="space-y-4">
       <ReportDownloads report={report} loading={isPending} error={isError} />
-      <button className="btn-primary" onClick={() => setEditing({ ...empty })}>+ Nuevo producto</button>
-      {editing && (
-        <div className="panel grid gap-3 p-4 sm:grid-cols-2">
-          <input className="input" placeholder="Nombre" value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
-          <select className="input" value={editing.brand} onChange={(e) => setEditing({ ...editing, brand: e.target.value })}><option>Nike</option><option>Adidas</option></select>
-          <label className="text-sm">Precio (Q)<input className="input" type="number" value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} /></label>
-          <label className="text-sm">Existencias<input className="input" type="number" value={editing.stock ?? 0} onChange={(e) => setEditing({ ...editing, stock: Number(e.target.value) })} /></label>
-          <input className="input" placeholder="Tallas separadas por coma" value={editing.sizes ?? ""} onChange={(e) => setEditing({ ...editing, sizes: e.target.value })} />
-          <input className="input" placeholder="Enlace de la foto" value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} />
-          <textarea className="input sm:col-span-2" placeholder="Descripción" value={editing.description ?? ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} />
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.active ?? true} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} /> Visible en tienda</label>
-          <div className="flex justify-end gap-2"><button className="btn-ghost" onClick={() => setEditing(null)}>Cancelar</button><button className="btn-primary" onClick={save}>Guardar</button></div>
-        </div>
-      )}
-      <div className="panel overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-secondary text-left"><tr><th className="p-3">Producto</th><th>Marca</th><th>Precio</th><th>Existencias</th><th>Estado</th><th></th></tr></thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p.id} className="border-t border-border">
-                <td className="flex items-center gap-3 p-3"><img src={p.image_url} alt="" className="h-10 w-10 rounded object-cover" />{p.name}</td>
-                <td>{p.brand}</td>
-                <td>{q(Number(p.price))}</td>
-                <td><span className={`chip ${p.stock <= 0 ? "bg-destructive text-destructive-foreground" : p.stock <= 5 ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>{p.stock}</span></td>
-                <td>{p.active ? "Visible" : "Oculto"}</td>
-                <td className="space-x-2 pr-3 text-right whitespace-nowrap">
-                  <button className="btn-ghost px-2 py-1" onClick={() => setEditing(p)}>Editar</button>
-                  <button className="btn-ghost px-2 py-1 text-destructive" onClick={() => del(p.id)}>Eliminar</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <p className="text-muted-foreground">Consulta los productos existentes. Solo el administrador puede agregarlos o modificar sus existencias.</p>
+      <InventoryTable products={products} />
     </div>
   );
 }
