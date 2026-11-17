@@ -13,3 +13,21 @@ export function assessRisks(d: Overview): Risk[] {
   if ((d.customers_without_pin ?? 0) > 0) r.push({ level: "bajo", title: "Clientes sin PIN", detail: `${d.customers_without_pin} cliente(s) no han creado su PIN.`, suggestion: "Recuérdales crear su PIN en “Mi PIN” para proteger sus compras." });
   return r;
 }
+
+export type PinDay = { day: string; fallidos: number; bloqueos: number; cambios: number };
+/** Agrupa eventos de PIN por día (últimos `days` días, incluido hoy). */
+export function pinEventsByDay(events: { event_type: string; created_at: string }[], days = 7, now = new Date()): PinDay[] {
+  const out: PinDay[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    out.push({ day: d.toLocaleDateString("en-CA"), fallidos: 0, bloqueos: 0, cambios: 0 });
+  }
+  for (const e of events) {
+    const row = out.find((r) => r.day === new Date(e.created_at).toLocaleDateString("en-CA"));
+    if (!row) continue;
+    if (e.event_type === "pin_failed") row.fallidos++;
+    else if (e.event_type === "pin_locked") row.bloqueos++;
+    else if (e.event_type === "pin_changed") row.cambios++;
+  }
+  return out;
+}
