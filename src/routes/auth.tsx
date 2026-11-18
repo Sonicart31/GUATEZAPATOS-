@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { accessError, emailsMatch } from "@/lib/access";
+import { accessError, emailsMatch, postAuthPath } from "@/lib/access";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -31,6 +32,11 @@ function AuthPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [notice, setNotice] = useState("");
   const navigate = useNavigate();
+  const { user, role, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) navigate({ to: postAuthPath(role), replace: true });
+  }, [loading, navigate, role, user]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -52,7 +58,6 @@ function AuthPage() {
           throw error;
         }
         toast.success("¡Bienvenido!");
-        navigate({ to: "/" });
       } else {
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(), password,
@@ -60,8 +65,7 @@ function AuthPage() {
         });
         if (error) throw error;
         setPassword(""); setPasswordConfirmation("");
-        if (data.session) navigate({ to: "/" });
-        else setMode("confirm");
+        if (!data.session) setMode("confirm");
       }
     } catch (error) {
       setErrorMessage(accessError(error as { code?: string; message: string }));

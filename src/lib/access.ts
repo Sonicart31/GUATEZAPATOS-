@@ -1,4 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { AppRole } from "@/lib/permissions";
+
+export function postAuthPath(role: AppRole): "/" | "/riesgos" {
+  return role === "analista" ? "/riesgos" : "/";
+}
 
 export function emailsMatch(email: string, confirmation: string) {
   return email.trim().toLowerCase() === confirmation.trim().toLowerCase();

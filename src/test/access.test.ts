@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 const { resetPasswordForEmail, verifyOtp } = vi.hoisted(() => ({ resetPasswordForEmail: vi.fn(), verifyOtp: vi.fn() }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: { auth: { resetPasswordForEmail, verifyOtp } } }));
-import { emailsMatch, sendRecovery, verifyRecovery } from "@/lib/access";
+import { emailsMatch, postAuthPath, sendRecovery, verifyRecovery } from "@/lib/access";
 
 describe("Account confirmation and recovery", () => {
   beforeEach(() => vi.resetAllMocks());
+  it("takes a confirmed security analyst directly to Riesgos", () => {
+    expect(postAuthPath("analista")).toBe("/riesgos");
+  });
+  it("takes customers to the store after authentication", () => {
+    expect(postAuthPath("cliente")).toBe("/");
+  });
   it("requires both email entries to match", () => {
     expect(emailsMatch("cliente@example.com", "otro@example.com")).toBe(false);
     expect(emailsMatch(" Cliente@example.com ", "cliente@example.com")).toBe(true);
