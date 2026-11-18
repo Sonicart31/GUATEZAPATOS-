@@ -1,4 +1,5 @@
 # GuateZapatos roadmap
+- [ ] Revisar confirmación de aarteagar@miumg.edu.gt y verificar su inicio de sesión y acceso a Riesgos
 - [x] Separar inventario: vendedor solo consulta; administrador agrega productos y modifica existencias
 - [ ] Asignar una cuenta real al rol administrador — requiere correo del usuario
 - [x] PIN personal obligatorio en compras y cancelaciones, con validación protegida
