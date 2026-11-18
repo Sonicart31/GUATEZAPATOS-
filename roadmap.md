@@ -1,4 +1,5 @@
 # GuateZapatos roadmap
+- [x] Revisar confirmación de correo y acceso de analista en todas las pantallas, flujos y funciones relacionados
 - [x] Revisar confirmación de aarteagar@miumg.edu.gt y verificar su inicio de sesión y acceso a Riesgos
 - [x] Separar inventario: vendedor solo consulta; administrador agrega productos y modifica existencias
 - [ ] Asignar una cuenta real al rol administrador — requiere correo del usuario
