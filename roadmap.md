@@ -1,4 +1,5 @@
 # GuateZapatos roadmap
+- [x] Cerrar la sesión tras 30 segundos sin actividad y reiniciar el contador con interacción
 - [x] Revisar confirmación de correo y acceso de analista en todas las pantallas, flujos y funciones relacionados
 - [x] Revisar confirmación de aarteagar@miumg.edu.gt y verificar su inicio de sesión y acceso a Riesgos
 - [x] Separar inventario: vendedor solo consulta; administrador agrega productos y modifica existencias
